@@ -1,0 +1,366 @@
+{
+  "version": "1.0.0",
+  "templateId": "royal-palace",
+  "setupMode": "dual-city",
+  "showStudioButton": true,
+  "language": "tr",
+  "primaryDate": "2026-11-14T19:30",
+  "bride": {
+    "firstName": "Elif",
+    "lastName": "Soylu",
+    "motherName": "Ayşe",
+    "fatherName": "Kemal",
+    "familyTitle": "Soylu Ailesi",
+    "photoUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80",
+    "bio": "Mimar & Sanatsever"
+  },
+  "groom": {
+    "firstName": "Mert",
+    "lastName": "Karahan",
+    "motherName": "Zeynep",
+    "fatherName": "Hakan",
+    "familyTitle": "Karahan Ailesi",
+    "photoUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80",
+    "bio": "Yazılım Mühendisi & Müzik Tutkunu"
+  },
+  "displayOrder": "bride-first",
+  "hashtag": "#ElifVeMertEvleniyor",
+  "heroTitle": "Evleniyoruz",
+  "invitationQuote": "Sevgiyle başlayan hikayemizi sonsuzluğa taşırken, bu en özel günlerimizde siz değerli dostlarımızı ve ailemizi aramızda görmekten mutluluk duyarız.",
+  "invitationSubtext": "İki şehir, tek kalp, unutulmaz bir hafta sonu...",
+  "heroPhotoUrl": "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1600&q=85",
+  "customNotesEnabled": true,
+  "customNotesTitle": "Misafirlerimiz İçin Önemli Notlar",
+  "customNotes": [
+    {
+      "id": "cn-1",
+      "badge": "ÖNEMLİ HATIRLATMA",
+      "title": "Nikah Saati & Boğaz Trafiği",
+      "content": "Resmi nikahımız tam saat 19:00'da kıyılacaktır. Cumartesi akşamı Boğaz hattındaki yoğunluğu göz önünde bulundurarak 18:30'daki karşılama kokteylimize yetişmenizi rica ederiz.",
+      "highlight": true
+    },
+    {
+      "id": "cn-2",
+      "badge": "KINA & AFTER PARTY",
+      "title": "Hava Durumu & Rahat Ayakkabı",
+      "content": "İzmir'deki kına gecemiz açık bağ bahçesinde gerçekleşeceği için akşam serinliğine karşı yanınıza şal alabilirsiniz. After party için sneaker/rahat ayakkabı getirmeyi unutmayın!",
+      "highlight": false
+    }
+  ],
+  "events": [
+    {
+      "id": "evt-kina-1",
+      "type": "kina",
+      "enabled": true,
+      "badgeText": "1. İL • İZMİR (KIZ TARAFI)",
+      "title": "Kına Gecesi & Kız Tarafı Kutlaması",
+      "subtitle": "Geleneksel kına merasimi ve eğlence",
+      "date": "2026-11-07",
+      "startTime": "19:30",
+      "endTime": "23:59",
+      "city": "İzmir",
+      "district": "Urla",
+      "venueName": "La Mahzen Vineyard & Bahçe",
+      "address": "Kuşçular Mah. 8028 Sok. No:12 Urla",
+      "latitude": 38.2886,
+      "longitude": 26.7689,
+      "description": "İzmir'deki dostlarımız ve akrabalarımızla bağ evi atmosferinde kına ve kutlama gecemiz.",
+      "dressCode": "Kırmızı, Zümrüt Yeşili veya Şık Gece Kıyafeti",
+      "parkingInfo": "Mekan girişinde ücretsiz otopark alanı mevcuttur.",
+      "contactPerson": "Gelin Kardeşi (Selin): 0532 111 22 33"
+    },
+    {
+      "id": "evt-gelin-alma",
+      "type": "gelin-alma",
+      "enabled": true,
+      "badgeText": "2. İL • İSTANBUL • GÜNDÜZ",
+      "title": "Gelin Alma & Düğün Konvoyu",
+      "subtitle": "Davul-zurna eşliğinde baba evinden uğurlama",
+      "date": "2026-11-14",
+      "startTime": "14:00",
+      "endTime": "15:00",
+      "city": "İstanbul",
+      "district": "Kadıköy",
+      "venueName": "Soylu Ailesi Evi (Fenerbahçe)",
+      "address": "Fenerbahçe Mah. Bağdat Cad. Çamlık Sok. No:18 Kadıköy",
+      "latitude": 40.9718,
+      "longitude": 29.0432,
+      "description": "Saat 14:00'te gelin evinde buluşulacak, 14:45'te konvoy halinde nikah ve düğün mekanına hareket edilecektir.",
+      "dressCode": "Gündüz Şıklığı",
+      "parkingInfo": "Sokak üzerinde ve yan caddede İSPARK alanı mevcuttur.",
+      "contactPerson": "Sağdıç (Burak): 0533 444 55 66"
+    },
+    {
+      "id": "evt-resmi-nikah",
+      "type": "resmi-nikah",
+      "enabled": true,
+      "badgeText": "2. İL • İSTANBUL • NİKAH & KOKTEYL",
+      "title": "Resmi Nikah & Hoş Geldiniz Kokteyli",
+      "subtitle": "Boğaz kıyısında nikah merasimi ve gün batımı kokteyli",
+      "date": "2026-11-14",
+      "startTime": "18:30",
+      "endTime": "19:30",
+      "city": "İstanbul",
+      "district": "Beşiktaş",
+      "venueName": "Four Seasons Hotel Bosphorus - Atik Paşa Teras",
+      "address": "Çırağan Cad. No:28 Beşiktaş",
+      "latitude": 41.0419,
+      "longitude": 29.0114,
+      "description": "Boğaz manzaralı terasta hoş geldiniz kokteyli eşliğinde saat tam 19:00'da resmi nikahımız kıyılacaktır.",
+      "dressCode": "Black Tie / Uzun Abiye & Smokin",
+      "parkingInfo": "Otel girişinde ücretsiz vale hizmeti sunulmaktadır.",
+      "contactPerson": "Organizasyon Sorumlusu (Ece): 0535 777 88 99"
+    },
+    {
+      "id": "evt-dugun-ana",
+      "type": "dugun",
+      "enabled": true,
+      "badgeText": "2. İL • İSTANBUL • ANA DÜĞÜN",
+      "title": "Düğün Yemeği & Balo Töreni",
+      "subtitle": "Canlı orkestra eşliğinde gala yemeği ve düğün eğlencesi",
+      "date": "2026-11-14",
+      "startTime": "19:30",
+      "endTime": "23:30",
+      "city": "İstanbul",
+      "district": "Beşiktaş",
+      "venueName": "Four Seasons Hotel Bosphorus - Balo Salonu",
+      "address": "Çırağan Cad. No:28 Beşiktaş",
+      "latitude": 41.0419,
+      "longitude": 29.0114,
+      "description": "Nikah törenimizin hemen ardından Balo Salonu'nda gala yemeği ve canlı orkestra performansıyla eğlencemiz devam edecektir.",
+      "dressCode": "Black Tie / Gece Şıklığı",
+      "parkingInfo": "Vale hizmeti gece boyu aktiftir.",
+      "contactPerson": "Masa Planlama & LCV: 0535 777 88 99"
+    },
+    {
+      "id": "evt-after-party",
+      "type": "after-party",
+      "enabled": true,
+      "badgeText": "GECE SONU • AFTER PARTY",
+      "title": "After Party & DJ Performansı",
+      "subtitle": "Sabaha kadar dans ve imza kokteyller",
+      "date": "2026-11-14",
+      "startTime": "23:30",
+      "endTime": "03:00",
+      "city": "İstanbul",
+      "district": "Beşiktaş",
+      "venueName": "Otel Marina Lounge (Alt Kat Sahil Terası)",
+      "address": "Çırağan Cad. No:28 Beşiktaş",
+      "latitude": 41.0419,
+      "longitude": 29.0114,
+      "description": "Düğün pastasının ardından rahat ayakkabılarımızı giyip DJ performansı ve gece atıştırmalıkları (gece çorbası & mini burger) ile eğlenceye devam ediyoruz!",
+      "dressCode": "Rahat & Şık (Sneaker serbest!)",
+      "parkingInfo": "Aynı mekan içerisinde, ek ulaşım gerekmez.",
+      "contactPerson": "Sağdıç (Burak): 0533 444 55 66"
+    }
+  ],
+  "storyEnabled": true,
+  "storyMilestones": [
+    {
+      "id": "st-1",
+      "date": "Ekim 2021",
+      "title": "İlk Karşılaşma",
+      "description": "Moda sahilinde yağmurlu bir sonbahar akşamı ortak bir arkadaşımızın doğum gününde ilk kez sohbet ettik.",
+      "imageUrl": "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "st-2",
+      "date": "Haziran 2023",
+      "title": "İlk Tatilimiz",
+      "description": "Kaş ve Kaputaş kıyılarında gün batımını izlerken hayat boyu birlikte yürüyeceğimizden emindik.",
+      "imageUrl": "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "st-3",
+      "date": "Mayıs 2025",
+      "title": "Unutulmaz 'Evet!'",
+      "description": "Kapadokya'da balonlar gökyüzüne yükselirken gelen sürpriz evlilik teklifiyle yeni yolculuğumuz başladı.",
+      "imageUrl": "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "st-4",
+      "date": "Kasım 2026",
+      "title": "Büyük Gün",
+      "description": "İzmir ve İstanbul'da tüm sevdiklerimizle bu masalı taçlandırıyoruz.",
+      "imageUrl": "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=600&q=80"
+    }
+  ],
+  "travelAndStay": {
+    "enabled": true,
+    "shuttleEnabled": true,
+    "shuttles": [
+      {
+        "id": "sh-1",
+        "title": "İzmir Kına Gecesi Servisi",
+        "city": "İzmir",
+        "departurePoint": "Karşıyaka İskele & Alsancak Lozan Meydanı",
+        "departureTime": "18:15",
+        "returnTime": "00:15",
+        "contactPhone": "0532 111 22 33",
+        "notes": "Servis kullanacak misafirlerimizin LCV formunda belirtmesini rica ederiz."
+      },
+      {
+        "id": "sh-2",
+        "title": "İstanbul Anadolu Yakası Düğün Servisi",
+        "city": "İstanbul",
+        "departurePoint": "Kadıköy Evlendirme Dairesi Otoparkı Önü",
+        "departureTime": "17:15",
+        "returnTime": "01:30",
+        "contactPhone": "0533 444 55 66",
+        "notes": "Boğaz trafiği nedeniyle tam saatinde hareket edecektir."
+      }
+    ],
+    "hotelsEnabled": true,
+    "hotels": [
+      {
+        "id": "ht-1",
+        "name": "Urla Bağ Evi Butik Otel",
+        "city": "İzmir",
+        "distanceToVenue": "Kına mekanına 5 dk mesafede",
+        "discountCode": "ELIFMERT20",
+        "phone": "0232 754 00 00",
+        "mapUrl": "https://www.google.com/maps/search/?api=1&query=Urla+Butik+Otel",
+        "notes": "Şehir dışından gelecek misafirlerimiz için %20 özel indirim tanımlanmıştır."
+      },
+      {
+        "id": "ht-2",
+        "name": "Conrad Istanbul Bosphorus",
+        "city": "İstanbul",
+        "distanceToVenue": "Düğün mekanına 7 dk mesafede",
+        "discountCode": "KARAHAN2026",
+        "phone": "0212 310 25 25",
+        "mapUrl": "https://www.google.com/maps/search/?api=1&query=Conrad+Istanbul+Bosphorus",
+        "notes": "Rezervasyon sırasında düğün grubu kodunu paylaşabilirsiniz."
+      }
+    ]
+  },
+  "dressCode": {
+    "enabled": true,
+    "title": "Kıyafet Kodu & Renk Paleti",
+    "description": "Fotoğraflarda ve salonda bütünlük oluşturması için aşağıdaki renk tonlarından ilham alabilirsiniz.",
+    "colors": [
+      { "name": "Siyah", "hex": "#18181B" },
+      { "name": "Zümrüt Yeşili", "hex": "#064E3B" },
+      { "name": "Şampanya", "hex": "#E6D3B3" },
+      { "name": "Bordo", "hex": "#7F1D1D" },
+      { "name": "Altın Bej", "hex": "#C5A059" }
+    ],
+    "gentlemenNote": "Smokin veya koyu renk takım elbise tercih edilmesi rica olunur.",
+    "ladiesNote": "Uzun gece elbisesi / abiye (Beyaz ve kırık beyaz tonlarının gelinimize bırakılmasını rica ederiz)."
+  },
+  "galleryEnabled": true,
+  "galleryPhotos": [
+    {
+      "id": "gal-1",
+      "url": "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=900&q=80",
+      "caption": "Save The Date Çekimimiz"
+    },
+    {
+      "id": "gal-2",
+      "url": "https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=900&q=80",
+      "caption": "Nişan Hatırası"
+    },
+    {
+      "id": "gal-3",
+      "url": "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=900&q=80",
+      "caption": "Kapadokya Gün Batımı"
+    },
+    {
+      "id": "gal-4",
+      "url": "https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=900&q=80",
+      "caption": "Sonsuzluğa Adım Adım"
+    }
+  ],
+  "guestPhotoUploadEnabled": true,
+  "albumVisibilityMode": "moderated",
+  "albumUploadPin": "",
+  "showPublicAlbumWall": true,
+  "guestPhotoUploadUrl": "https://photos.google.com/",
+  "guestPhotoUploadNote": "Düğün ve kına boyunca çektiğiniz en güzel fotoğraf ve videoları QR kodu okutarak ortak albümümüze yükleyebilirsiniz!",
+  "gift": {
+    "enabled": true,
+    "title": "Hediye & Takı Bilgisi",
+    "description": "Varlığınız bizim için en büyük hediye. Ancak uzaktan katılacak veya dijital olarak katkıda bulunmak isteyen yakınlarımız için hesap bilgilerimiz aşağıda yer almaktadır.",
+    "transferNote": "💡 Tavsiye: Lütfen FAST / EFT / Havale açıklama kısmına Ad-Soyad ve 'Düğün Armağanı' notunu yazmayı unutmayınız.",
+    "accounts": [
+      {
+        "id": "acc-1",
+        "ownerName": "Elif Soylu",
+        "bankName": "Garanti BBVA (TL Hesabı)",
+        "currency": "TRY",
+        "iban": "TR32 0006 2000 0000 1234 5678 90",
+        "descriptionNote": "Açıklamaya: 'Ad-Soyad Düğün Hediyesi' yazabilirsiniz"
+      },
+      {
+        "id": "acc-2",
+        "ownerName": "Mert Karahan",
+        "bankName": "İş Bankası (EUR Hesabı)",
+        "currency": "EUR",
+        "iban": "TR88 0006 4000 0020 9876 5432 10",
+        "descriptionNote": "Açıklamaya: 'Ad-Soyad Düğün Armağanı' yazabilirsiniz"
+      }
+    ]
+  },
+  "rsvp": {
+    "enabled": true,
+    "deadlineDate": "2026-10-30",
+    "allowEventSelection": true,
+    "askDietaryOrNote": true,
+    "askShuttleNeed": true,
+    "maxGuestsPerInvite": 6,
+    "whatsappNumber": "905320000000",
+    "webhookUrl": "",
+    "memoryWallEnabled": true
+  },
+  "faqEnabled": true,
+  "faqs": [
+    {
+      "id": "faq-1",
+      "question": "Mekanlar açık alan mı yoksa kapalı alan mı?",
+      "answer": "İzmir Kına gecemiz yarı açık bağ evi bahçesinde (ısıtmalı tente mevcut), İstanbul'daki nikahımız açık terasta, düğün yemeğimiz ise kapalı balo salonunda gerçekleşecektir."
+    },
+    {
+      "id": "faq-2",
+      "question": "LCV (Katılım Bildirimi) son tarihi nedir?",
+      "answer": "Masa düzeni ve şehir dışı servis organizasyonumuz için 30 Ekim 2026 tarihine kadar aşağıdaki LCV formunu doldurmanızı önemle rica ederiz."
+    },
+    {
+      "id": "faq-3",
+      "question": "Çocuklarla katılım uygun mu?",
+      "answer": "Elbette! Ancak 23:30'da başlayacak After Party bölümümüz yüksek sesli müzik nedeniyle sadece yetişkinlere yöneliktir."
+    },
+    {
+      "id": "faq-4",
+      "question": "Otopark ve vale imkanı var mı?",
+      "answer": "Hem İzmir hem de İstanbul'daki tüm mekanlarımızda misafirlerimiz için ücretsiz otopark ve vale hizmeti bulunmaktadır."
+    }
+  ],
+  "envelopeAndMusic": {
+    "requireEnvelopeClick": true,
+    "envelopeTitle": "Özel Davetlisiniz",
+    "envelopeSubtitle": "Davetiyeyi açmak için mühre dokunun",
+    "waxSealInitials": "E & M",
+    "musicEnabled": true,
+    "musicMelody": "romantic-waltz",
+    "musicTitle": "Romantik Piyano Valsi",
+    "customMusicUrl": ""
+  },
+  "initialGuestNotes": [
+    {
+      "id": "gn-1",
+      "name": "Zeynep & Caner",
+      "relation": "Üniversite Arkadaşları",
+      "message": "İlk tanıştığınız günü dün gibi hatırlıyoruz! Bir ömür boyu mutluluklar diliyoruz, hem İzmir'de hem İstanbul'da yanınızdayız!",
+      "createdAt": "2 gün önce",
+      "attendingCities": ["İzmir", "İstanbul"]
+    },
+    {
+      "id": "gn-2",
+      "name": "Ahmet Amca & Ailesi",
+      "relation": "Aile Büyüğü",
+      "message": "Allah bir yastıkta kocatsın güzel evlatlarım. İstanbul'daki nikahta görüşmek üzere.",
+      "createdAt": "5 gün önce",
+      "attendingCities": ["İstanbul"]
+    }
+  ]
+}

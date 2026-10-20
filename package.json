@@ -1,0 +1,45 @@
+{
+  "name": "dijital-dugun-davetiyesi",
+  "private": false,
+  "version": "1.0.0",
+  "description": "Açık kaynaklı, çoklu şablonlu, tek veya çoklu il destekli interaktif dijital düğün ve etkinlik davetiyesi web uygulaması.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "start": "npm run build && node server/index.mjs",
+    "yayin": "npm run build && node server/index.mjs",
+    "preview": "vite preview",
+    "setup": "node scripts/setup.mjs",
+    "kurulum": "node scripts/setup.mjs"
+  },
+  "keywords": [
+    "dugun-davetiyesi",
+    "dijital-davetiye",
+    "wedding-invitation",
+    "interactive-invitation",
+    "nikah",
+    "kina",
+    "rsvp",
+    "lcv",
+    "react",
+    "tailwindcss"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "lucide-react": "^1.16.0",
+    "qrcode": "^1.5.4",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.4",
+    "@types/node": "^22.14.1",
+    "@types/qrcode": "^1.5.5",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "tailwindcss": "^4.1.4",
+    "typescript": "~5.8.3",
+    "vite": "^6.3.2"
+  }
+}
