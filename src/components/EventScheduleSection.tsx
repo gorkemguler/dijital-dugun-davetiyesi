@@ -39,7 +39,13 @@ export const EventScheduleSection: React.FC<EventScheduleSectionProps> = ({
   const cities = Array.from(new Set(enabledEvents.map((e) => e.city).filter(Boolean)));
 
   const [selectedCity, setSelectedCity] = useState<string>('ALL');
-  const [expandedMapIds, setExpandedMapIds] = useState<Record<string, boolean>>({});
+  const [expandedMapIds, setExpandedMapIds] = useState<Record<string, boolean>>(() => {
+    // Auto-expand interactive maps when there are up to 3 main ceremonies
+    if (enabledEvents.length <= 3) {
+      return Object.fromEntries(enabledEvents.map((e) => [e.id, true]));
+    }
+    return {};
+  });
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const visibleEvents =
@@ -315,7 +321,7 @@ export const EventScheduleSection: React.FC<EventScheduleSectionProps> = ({
                     </div>
 
                     <a
-                      href={navLinks.googleMapsUrl}
+                      href={navLinks.googleMapsDirectionsUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-xs sm:text-sm font-semibold shadow-md transition-all ${theme.colors.buttonBg} ${theme.colors.buttonHoverBg} ${theme.colors.buttonText}`}
@@ -323,6 +329,18 @@ export const EventScheduleSection: React.FC<EventScheduleSectionProps> = ({
                       <Navigation className="h-4 w-4" />
                       Google Haritalar Yol Tarifi
                     </a>
+
+                    {navLinks.googleMapsUrl !== navLinks.googleMapsDirectionsUrl && (
+                      <a
+                        href={navLinks.googleMapsUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`inline-flex items-center justify-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition-all hover:opacity-80 ${theme.colors.cardBg} ${theme.colors.cardBorder} ${theme.colors.textPrimary}`}
+                      >
+                        <MapPin className="h-3.5 w-3.5" style={{ color: theme.colors.accent }} />
+                        Google Maps Mekan Konumu
+                      </a>
+                    )}
 
                     <div className="grid grid-cols-2 gap-2">
                       <a

@@ -49,6 +49,19 @@ Kurulum sırasında kod yazmanıza veya JSON dosyası düzenlemenize gerek yoktu
 
 ## Kurulum ve Çalıştırma
 
+### Seçenek A: Docker ile Tek Komutta Kurulum (Raspberry Pi 4B / Linux / macOS)
+
+```bash
+git clone https://github.com/gorkemguler/dijital-dugun-davetiyesi.git
+cd dijital-dugun-davetiyesi
+docker compose up -d --build
+```
+
+- Konteyner `restart: unless-stopped` olarak ayarlıdır; sistem yeniden başladığında otomatik açılır.
+- Tüm LCV kayıtları, yönetici ayarları (`./data`) ve yüklenen fotoğraf/videolar (`./uploads`) kalıcı (persistent volume) olarak saklanır.
+
+### Seçenek B: Node.js ile Doğrudan Çalıştırma
+
 Gereksinimler: **Node.js 18+** (Node 20 veya 22 önerilir).
 
 ```bash

@@ -1,0 +1,31 @@
+services:
+  davetiye:
+    container_name: dijital-dugun-davetiyesi
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "4173:4173"
+    environment:
+      - NODE_ENV=production
+      - PORT=4173
+      - HOST=0.0.0.0
+      - TZ=Europe/Istanbul
+      # İsteğe bağlı: İlk kurulum şifresini ortam değişkeniyle otomatik tanımlamak isterseniz:
+      # - ADMIN_PASSWORD=guclu_bir_sifre_girin
+    volumes:
+      # LCV yanıtları, anı duvarı mesajları, albüm kayıtları ve yönetici ayarları kalıcı tutulur
+      - ./data:/app/data
+      # Misafirlerin yüklediği fotoğraf ve 4K videolar (50 GB kota) kalıcı tutulur
+      - ./uploads:/app/uploads
+
+  # İsteğe Bağlı: Cloudflare Tunnel'ı da Docker içinde çalıştırmak isterseniz
+  # aşağıdaki bloğun başındaki '#' işaretlerini kaldırıp CLOUDFLARE_TUNNEL_TOKEN değerinizi girebilirsiniz:
+  # cloudflared:
+  #   container_name: dijital-davetiye-tunnel
+  #   image: cloudflare/cloudflared:latest
+  #   restart: unless-stopped
+  #   command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN}
+  #   depends_on:
+  #     - davetiye

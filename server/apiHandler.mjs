@@ -13,6 +13,7 @@ const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.resolve(__dirname, '..');
 const CONFIG_PATH = path.resolve(ROOT_DIR, 'src/data/weddingConfig.json');
 const DATA_DIR = path.resolve(ROOT_DIR, 'data');
+const CUSTOM_CONFIG_PATH = path.resolve(DATA_DIR, 'customConfig.json');
 const AUTH_PATH = path.resolve(DATA_DIR, 'adminAuth.json');
 const RSVP_PATH = path.resolve(DATA_DIR, 'rsvpSubmissions.json');
 const ALBUM_META_PATH = path.resolve(DATA_DIR, 'albumMedia.json');
@@ -180,15 +181,35 @@ async function getUploadsFolderSize() {
   }
 }
 
+async function readActiveConfig() {
+  if (fs.existsSync(CUSTOM_CONFIG_PATH)) {
+    const custom = await readJsonSafe(CUSTOM_CONFIG_PATH, null);
+    if (custom && typeof custom === 'object') return custom;
+  }
+  return await readJsonSafe(CONFIG_PATH, {});
+}
+
 async function getAuthData() {
   const existing = await readJsonSafe(AUTH_PATH, null);
   if (existing && existing.SessionSecret) {
     return existing;
   }
+  const envPass =
+    process.env.ADMIN_PASSWORD && process.env.ADMIN_PASSWORD.trim().length >= 4
+      ? process.env.ADMIN_PASSWORD.trim()
+      : '';
+  let salt = '';
+  let hash = '';
+  let setupDone = false;
+  if (envPass) {
+    salt = crypto.randomBytes(16).toString('hex');
+    hash = await hashPasswordAsync(envPass, salt);
+    setupDone = true;
+  }
   const initial = {
-    isSetupCompleted: false,
-    passwordSalt: '',
-    passwordHash: '',
+    isSetupCompleted: setupDone,
+    passwordSalt: salt,
+    passwordHash: hash,
     SessionSecret: crypto.randomBytes(32).toString('hex'),
     updatedAt: new Date().toISOString(),
   };
@@ -279,13 +300,16 @@ function readJsonBody(req, maxBytes = 1024 * 1024) {
 
 function getClientIp(req) {
   const remoteAddr = req.socket?.remoteAddress || '';
-  const isLoopback =
-    remoteAddr === '127.0.0.1' ||
-    remoteAddr === '::1' ||
-    remoteAddr === '::ffff:127.0.0.1';
+  const cleanRemote = remoteAddr.replace(/^::ffff:/, '');
+  const isLocalOrDocker =
+    cleanRemote === '127.0.0.1' ||
+    cleanRemote === '::1' ||
+    cleanRemote.startsWith('10.') ||
+    cleanRemote.startsWith('192.168.') ||
+    /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(cleanRemote);
 
-  // Only trust proxy headers when coming from local cloudflared / reverse proxy
-  if (isLoopback) {
+  // Only trust proxy headers when coming from local cloudflared / Docker bridge / reverse proxy
+  if (isLocalOrDocker) {
     const cfIp = req.headers['cf-connecting-ip'];
     if (typeof cfIp === 'string' && cfIp.trim()) return cfIp.trim().slice(0, 64);
     const xff = req.headers['x-forwarded-for'];
@@ -392,7 +416,7 @@ export async function handleApiAndUploads(req, res, next) {
 
   // GET /api/state
   if (req.method === 'GET' && pathname === '/api/state') {
-    const config = await readJsonSafe(CONFIG_PATH, {});
+    const config = await readActiveConfig();
     const albumItems = await readJsonSafe(ALBUM_META_PATH, []);
     const savedNotes = await readJsonSafe(NOTES_PATH, null);
     const guestNotes = Array.isArray(savedNotes) ? savedNotes : config.initialGuestNotes || [];
@@ -540,7 +564,12 @@ export async function handleApiAndUploads(req, res, next) {
       }
 
       await runSerializedWrite(async () => {
-        await writeJsonSafe(CONFIG_PATH, body.config);
+        await writeJsonSafe(CUSTOM_CONFIG_PATH, body.config);
+        try {
+          await writeJsonSafe(CONFIG_PATH, body.config);
+        } catch {
+          // Ignore if source tree is read-only inside Docker container
+        }
       });
 
       return sendJson(res, 200, {
@@ -631,7 +660,7 @@ export async function handleApiAndUploads(req, res, next) {
 
         let updatedNotes = null;
         if (message) {
-          const config = await readJsonSafe(CONFIG_PATH, {});
+          const config = await readActiveConfig();
           const existingNotes = await readJsonSafe(
             NOTES_PATH,
             config.initialGuestNotes || []
@@ -674,7 +703,7 @@ export async function handleApiAndUploads(req, res, next) {
       });
     }
 
-    const config = await readJsonSafe(CONFIG_PATH, {});
+    const config = await readActiveConfig();
     const requiredPin =
       typeof config.albumUploadPin === 'string' ? config.albumUploadPin.trim() : '';
 
@@ -853,7 +882,7 @@ export async function handleApiAndUploads(req, res, next) {
     if (!isAdmin && authData.isSetupCompleted) {
       return sendJson(res, 401, { error: 'Yetkisiz erişim.' });
     }
-    const config = await readJsonSafe(CONFIG_PATH, {});
+    const config = await readActiveConfig();
     const albumItems = await readJsonSafe(ALBUM_META_PATH, []);
     const usedBytes = await getUploadsFolderSize();
     const maxStorageGB =

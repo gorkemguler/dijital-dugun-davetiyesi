@@ -60,11 +60,12 @@ export function getEventNavigationLinks(event: WeddingEvent) {
     .join(', ');
   const encodedQuery = encodeURIComponent(queryText || 'Türkiye');
 
+  const googleMapsDirectionsUrl = hasCoords
+    ? `https://www.google.com/maps/dir/?api=1&destination=${event.latitude},${event.longitude}`
+    : `https://www.google.com/maps/dir/?api=1&destination=${encodedQuery}`;
+
   const googleMapsUrl =
-    sanitizeExternalUrl(event.googleMapsUrl) ||
-    (hasCoords
-      ? `https://www.google.com/maps/dir/?api=1&destination=${event.latitude},${event.longitude}`
-      : `https://www.google.com/maps/dir/?api=1&destination=${encodedQuery}`);
+    sanitizeExternalUrl(event.googleMapsUrl) || googleMapsDirectionsUrl;
 
   const appleMapsUrl =
     sanitizeExternalUrl(event.appleMapsUrl) ||
@@ -79,11 +80,12 @@ export function getEventNavigationLinks(event: WeddingEvent) {
       : `https://yandex.com.tr/harita/?text=${encodedQuery}`);
 
   const embedMapUrl = hasCoords
-    ? `https://maps.google.com/maps?q=${event.latitude},${event.longitude}&hl=tr&z=15&output=embed`
+    ? `https://maps.google.com/maps?q=${event.latitude},${event.longitude}&hl=tr&z=16&output=embed`
     : `https://maps.google.com/maps?q=${encodedQuery}&hl=tr&z=15&output=embed`;
 
   return {
     googleMapsUrl,
+    googleMapsDirectionsUrl,
     appleMapsUrl,
     yandexMapsUrl,
     embedMapUrl,

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Calendar, Clock, Heart, MapPin, Sparkles, ChevronDown } from 'lucide-react';
+import { Calendar, Clock, Heart, MapPin, Navigation, Sparkles, ChevronDown } from 'lucide-react';
 import { WeddingConfig } from '../types/wedding';
 import { TemplateTheme } from '../data/templates';
-import { sanitizeExternalUrl } from '../utils/securityAndLinks';
+import { getEventNavigationLinks, sanitizeExternalUrl } from '../utils/securityAndLinks';
 
 interface HeroAndCountdownProps {
   config: WeddingConfig;
@@ -23,6 +23,15 @@ export const HeroAndCountdown: React.FC<HeroAndCountdownProps> = ({
   theme,
   guestNameFromUrl,
 }) => {
+  const enabledEvents = config.events.filter((e) => e.enabled);
+  const [selectedCountdownTarget, setSelectedCountdownTarget] = useState<string>(
+    config.primaryDate
+  );
+
+  useEffect(() => {
+    setSelectedCountdownTarget(config.primaryDate);
+  }, [config.primaryDate]);
+
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({
     days: 0,
     hours: 0,
@@ -33,7 +42,7 @@ export const HeroAndCountdown: React.FC<HeroAndCountdownProps> = ({
 
   useEffect(() => {
     const updateCountdown = () => {
-      const target = new Date(config.primaryDate).getTime();
+      const target = new Date(selectedCountdownTarget || config.primaryDate).getTime();
       if (Number.isNaN(target)) return;
       const now = Date.now();
       const diff = target - now;
@@ -55,18 +64,33 @@ export const HeroAndCountdown: React.FC<HeroAndCountdownProps> = ({
     updateCountdown();
     const timer = window.setInterval(updateCountdown, 1000);
     return () => clearInterval(timer);
-  }, [config.primaryDate]);
+  }, [selectedCountdownTarget, config.primaryDate]);
 
   const firstPerson = config.displayOrder === 'bride-first' ? config.bride : config.groom;
   const secondPerson = config.displayOrder === 'bride-first' ? config.groom : config.bride;
 
-  const enabledEvents = config.events.filter((e) => e.enabled);
   const uniqueCities = Array.from(new Set(enabledEvents.map((e) => e.city).filter(Boolean)));
   const heroBgUrl = sanitizeExternalUrl(config.heroPhotoUrl);
 
+  const formatEventDateTr = (dateStr: string) => {
+    try {
+      const [y, m, d] = dateStr.split('-').map(Number);
+      if (!y || !m || !d) return dateStr;
+      const dt = new Date(y, m - 1, d);
+      return new Intl.DateTimeFormat('tr-TR', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        weekday: 'long',
+      }).format(dt);
+    } catch {
+      return dateStr;
+    }
+  };
+
   const formattedMainDate = (() => {
     try {
-      const dt = new Date(config.primaryDate);
+      const dt = new Date(selectedCountdownTarget || config.primaryDate);
       if (Number.isNaN(dt.getTime())) return config.primaryDate;
       return new Intl.DateTimeFormat('tr-TR', {
         weekday: 'long',
@@ -153,9 +177,17 @@ export const HeroAndCountdown: React.FC<HeroAndCountdownProps> = ({
             {secondPerson.firstName}
           </h1>
 
+          {/* Couple Full Surnames Badge */}
+          <p
+            className={`mt-2 text-xs sm:text-sm font-semibold tracking-[0.22em] uppercase ${theme.colors.textMuted}`}
+          >
+            {firstPerson.firstName} {firstPerson.lastName} &amp; {secondPerson.firstName}{' '}
+            {secondPerson.lastName}
+          </p>
+
           {/* Invitation Quote */}
           <p
-            className={`mx-auto mt-6 max-w-2xl text-base sm:text-lg leading-relaxed ${theme.colors.textSecondary}`}
+            className={`mx-auto mt-5 max-w-2xl text-base sm:text-lg leading-relaxed ${theme.colors.textSecondary}`}
           >
             {config.invitationQuote}
           </p>
@@ -169,46 +201,144 @@ export const HeroAndCountdown: React.FC<HeroAndCountdownProps> = ({
             </p>
           )}
 
-          {/* Main Date Display */}
-          <div className="mt-8 inline-flex flex-wrap items-center justify-center gap-3">
+          {/* Ceremony Highlights & Direct Map Directions Cards in Hero */}
+          {enabledEvents.length > 0 ? (
             <div
-              className={`flex items-center gap-2.5 border px-5 py-2.5 shadow-sm ${theme.colors.cardBg} ${theme.colors.cardBorder} ${theme.cardRadius}`}
+              className={`mt-8 grid grid-cols-1 ${
+                enabledEvents.length > 1 ? 'md:grid-cols-2' : 'max-w-lg mx-auto'
+              } gap-4 text-left`}
             >
-              <Calendar className="h-4 w-4" style={{ color: theme.colors.accent }} />
-              <span
-                className={`text-sm sm:text-base font-semibold ${theme.colors.textPrimary}`}
-                style={{ fontFamily: theme.fonts.heading }}
-              >
-                {formattedMainDate}
-              </span>
-            </div>
-          </div>
+              {enabledEvents.map((evt) => {
+                const evtTargetIso = `${evt.date}T${evt.startTime || '19:00'}`;
+                const isSelectedTarget = selectedCountdownTarget === evtTargetIso;
+                const navLinks = getEventNavigationLinks(evt);
 
-          {/* Live Countdown Timer */}
-          <div className="mt-8 grid grid-cols-4 gap-2.5 sm:gap-4 max-w-xl mx-auto">
-            {[
-              { label: 'GÜN', value: timeLeft.days },
-              { label: 'SAAT', value: timeLeft.hours },
-              { label: 'DAKİKA', value: timeLeft.minutes },
-              { label: 'SANİYE', value: timeLeft.seconds },
-            ].map((item) => (
+                return (
+                  <div
+                    key={evt.id}
+                    onClick={() => setSelectedCountdownTarget(evtTargetIso)}
+                    className={`group relative overflow-hidden border p-5 shadow-md transition-all cursor-pointer hover:-translate-y-0.5 ${
+                      theme.colors.cardBg
+                    } ${theme.colors.cardBorder} ${theme.cardRadius}`}
+                    style={
+                      isSelectedTarget
+                        ? {
+                            borderColor: theme.colors.accent,
+                            boxShadow: `0 0 0 1px ${theme.colors.accent}40`,
+                          }
+                        : undefined
+                    }
+                  >
+                    <div className="flex items-center justify-between gap-2 mb-2">
+                      <span
+                        className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-0.5 text-[10px] font-bold tracking-wider uppercase ${theme.colors.accentSoft}`}
+                      >
+                        <Calendar className="h-3 w-3" />
+                        {evt.title}
+                      </span>
+                      <span
+                        className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-0.5 text-xs font-bold ${theme.colors.accentSoft}`}
+                      >
+                        <Clock className="h-3.5 w-3.5" />
+                        Saat {evt.startTime}
+                      </span>
+                    </div>
+
+                    <div
+                      className={`text-base sm:text-lg font-bold ${theme.colors.textPrimary}`}
+                      style={{ fontFamily: theme.fonts.heading }}
+                    >
+                      {formatEventDateTr(evt.date)}
+                    </div>
+
+                    <div className={`mt-1.5 flex items-start gap-1.5 text-xs sm:text-sm font-semibold ${theme.colors.textSecondary}`}>
+                      <MapPin
+                        className="h-4 w-4 shrink-0 mt-0.5"
+                        style={{ color: theme.colors.accent }}
+                      />
+                      <span>
+                        {evt.venueName}
+                        {evt.district || evt.city
+                          ? ` (${[evt.district, evt.city].filter(Boolean).join('/')})`
+                          : ''}
+                      </span>
+                    </div>
+
+                    <div className="mt-4 flex flex-wrap items-center gap-2 pt-3 border-t border-current/10">
+                      <a
+                        href={navLinks.googleMapsDirectionsUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold shadow-sm transition-all ${theme.colors.buttonBg} ${theme.colors.buttonHoverBg} ${theme.colors.buttonText}`}
+                      >
+                        <Navigation className="h-3.5 w-3.5" />
+                        Google Maps Yol Tarifi Al
+                      </a>
+
+                      {navLinks.googleMapsUrl !== navLinks.googleMapsDirectionsUrl && (
+                        <a
+                          href={navLinks.googleMapsUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className={`inline-flex items-center gap-1 rounded-xl border px-3 py-2 text-xs font-semibold transition-all hover:opacity-80 ${theme.colors.cardBg} ${theme.colors.cardBorder} ${theme.colors.textPrimary}`}
+                        >
+                          <MapPin className="h-3.5 w-3.5" style={{ color: theme.colors.accent }} />
+                          Haritada Gör
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="mt-8 inline-flex flex-wrap items-center justify-center gap-3">
               <div
-                key={item.label}
-                className={`border p-3 sm:p-5 shadow-md transition-transform hover:-translate-y-0.5 ${theme.colors.cardBg} ${theme.colors.cardBorder} ${theme.cardRadius}`}
+                className={`flex items-center gap-2.5 border px-5 py-2.5 shadow-sm ${theme.colors.cardBg} ${theme.colors.cardBorder} ${theme.cardRadius}`}
               >
-                <div
-                  className={`text-2xl sm:text-4xl font-bold tabular-nums ${theme.colors.textPrimary}`}
+                <Calendar className="h-4 w-4" style={{ color: theme.colors.accent }} />
+                <span
+                  className={`text-sm sm:text-base font-semibold ${theme.colors.textPrimary}`}
                   style={{ fontFamily: theme.fonts.heading }}
                 >
-                  {String(item.value).padStart(2, '0')}
-                </div>
-                <div
-                  className={`mt-1 text-[10px] sm:text-xs font-semibold tracking-[0.2em] uppercase ${theme.colors.textMuted}`}
-                >
-                  {item.label}
-                </div>
+                  {formattedMainDate}
+                </span>
               </div>
-            ))}
+            </div>
+          )}
+
+          {/* Live Countdown Timer */}
+          <div className="mt-8">
+            <p className={`mb-2.5 text-[11px] font-bold tracking-[0.2em] uppercase ${theme.colors.textMuted}`}>
+              GERİ SAYIM • {formattedMainDate.toUpperCase()}
+            </p>
+            <div className="grid grid-cols-4 gap-2.5 sm:gap-4 max-w-xl mx-auto">
+              {[
+                { label: 'GÜN', value: timeLeft.days },
+                { label: 'SAAT', value: timeLeft.hours },
+                { label: 'DAKİKA', value: timeLeft.minutes },
+                { label: 'SANİYE', value: timeLeft.seconds },
+              ].map((item) => (
+                <div
+                  key={item.label}
+                  className={`border p-3 sm:p-5 shadow-md transition-transform hover:-translate-y-0.5 ${theme.colors.cardBg} ${theme.colors.cardBorder} ${theme.cardRadius}`}
+                >
+                  <div
+                    className={`text-2xl sm:text-4xl font-bold tabular-nums ${theme.colors.textPrimary}`}
+                    style={{ fontFamily: theme.fonts.heading }}
+                  >
+                    {String(item.value).padStart(2, '0')}
+                  </div>
+                  <div
+                    className={`mt-1 text-[10px] sm:text-xs font-semibold tracking-[0.2em] uppercase ${theme.colors.textMuted}`}
+                  >
+                    {item.label}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Quick Jump Buttons */}
@@ -218,7 +348,7 @@ export const HeroAndCountdown: React.FC<HeroAndCountdownProps> = ({
               className={`inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold shadow-lg transition-all ${theme.colors.buttonBg} ${theme.colors.buttonHoverBg} ${theme.colors.buttonText}`}
             >
               <Clock className="h-4 w-4" />
-              Etkinlik Saatleri &amp; Yol Tarifi
+              Detaylı Konum &amp; Haritalar
             </a>
             {config.rsvp.enabled && (
               <a
@@ -265,12 +395,16 @@ export const HeroAndCountdown: React.FC<HeroAndCountdownProps> = ({
               { person: secondPerson, roleLabel: config.displayOrder === 'bride-first' ? 'DAMAT' : 'GELİN' },
             ].map(({ person, roleLabel }) => {
               const photoUrl = sanitizeExternalUrl(person.photoUrl);
+              const hasParents = Boolean(
+                (person.motherName && person.motherName.trim()) ||
+                  (person.fatherName && person.fatherName.trim())
+              );
               return (
                 <div
                   key={roleLabel}
                   className={`flex flex-col items-center text-center border p-7 sm:p-8 shadow-lg ${theme.colors.cardBg} ${theme.colors.cardBorder} ${theme.cardRadius}`}
                 >
-                  {photoUrl && (
+                  {photoUrl ? (
                     <div
                       className="mb-5 h-28 w-28 sm:h-32 sm:w-32 overflow-hidden rounded-full border-4 shadow-md"
                       style={{ borderColor: `${theme.colors.accent}55` }}
@@ -280,6 +414,18 @@ export const HeroAndCountdown: React.FC<HeroAndCountdownProps> = ({
                         alt={`${person.firstName} ${person.lastName}`}
                         className="h-full w-full object-cover"
                       />
+                    </div>
+                  ) : (
+                    <div
+                      className={`mb-5 flex h-20 w-20 items-center justify-center rounded-full border-2 shadow-sm ${theme.colors.accentSoft}`}
+                      style={{ borderColor: `${theme.colors.accent}55` }}
+                    >
+                      <span
+                        className="text-3xl font-semibold"
+                        style={{ fontFamily: theme.fonts.script, color: theme.colors.accent }}
+                      >
+                        {person.firstName.charAt(0)}
+                      </span>
                     </div>
                   )}
 
@@ -310,9 +456,12 @@ export const HeroAndCountdown: React.FC<HeroAndCountdownProps> = ({
                     >
                       {person.familyTitle}
                     </p>
-                    <p className={`mt-1 text-sm font-medium ${theme.colors.textSecondary}`}>
-                      {person.motherName} &amp; {person.fatherName} {person.lastName}
-                    </p>
+                    {hasParents && (
+                      <p className={`mt-1 text-sm font-medium ${theme.colors.textSecondary}`}>
+                        {[person.motherName, person.fatherName].filter(Boolean).join(' & ')}{' '}
+                        {person.lastName}
+                      </p>
+                    )}
                   </div>
                 </div>
               );
