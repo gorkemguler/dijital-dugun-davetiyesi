@@ -235,6 +235,8 @@ export interface WeddingConfig {
   guestPhotoUploadEnabled: boolean;
   albumVisibilityMode?: AlbumVisibilityMode;
   albumUploadPin?: string;
+  maxTotalStorageGB?: number;
+  maxAlbumItems?: number;
   showPublicAlbumWall?: boolean;
   guestPhotoUploadUrl: string;
   guestPhotoUploadNote: string;

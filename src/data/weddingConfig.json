@@ -274,6 +274,8 @@
   "guestPhotoUploadEnabled": true,
   "albumVisibilityMode": "moderated",
   "albumUploadPin": "",
+  "maxTotalStorageGB": 50,
+  "maxAlbumItems": 10000,
   "showPublicAlbumWall": true,
   "guestPhotoUploadUrl": "https://photos.google.com/",
   "guestPhotoUploadNote": "Düğün ve kına boyunca çektiğiniz en güzel fotoğraf ve videoları QR kodu okutarak ortak albümümüze yükleyebilirsiniz!",

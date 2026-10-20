@@ -105,6 +105,15 @@ export const SetupStudioModal: React.FC<SetupStudioModalProps> = ({
   // RSVP Admin List
   const [rsvps, setRsvps] = useState<RsvpSubmission[]>([]);
   const [loadingRsvps, setLoadingRsvps] = useState(false);
+  const [storageStats, setStorageStats] = useState<{
+    usedBytes: number;
+    maxStorageGB: number;
+    maxAlbumItems: number;
+  }>({
+    usedBytes: 0,
+    maxStorageGB: config.maxTotalStorageGB || 50,
+    maxAlbumItems: config.maxAlbumItems || 10000,
+  });
 
   useEffect(() => {
     if (isOpen && activeTab === 'rsvps' && (isAdmin || !isSetupCompleted)) {
@@ -130,6 +139,9 @@ export const SetupStudioModal: React.FC<SetupStudioModalProps> = ({
         .then((d) => {
           if (Array.isArray(d.albumItems)) {
             onAlbumItemsChanged(d.albumItems);
+          }
+          if (d.storageStats) {
+            setStorageStats(d.storageStats);
           }
         })
         .catch(() => {});
@@ -1788,6 +1800,50 @@ export const SetupStudioModal: React.FC<SetupStudioModalProps> = ({
                         className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-3 py-2 text-xs text-white"
                       />
                     </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-zinc-300 mb-1">
+                        SD Kart / Sunucu Toplam Depolama Kotası (GB)
+                      </label>
+                      <input
+                        type="number"
+                        min={5}
+                        max={2000}
+                        value={config.maxTotalStorageGB ?? 50}
+                        onChange={(e) =>
+                          updateField(
+                            'maxTotalStorageGB',
+                            Math.max(5, Number(e.target.value) || 50)
+                          )
+                        }
+                        className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-3 py-2 text-xs text-white"
+                      />
+                      <p className="mt-1 text-[11px] text-zinc-400">
+                        64 GB SD kartlı Raspberry Pi sadece bu projeye ayrıldığında işletim sistemine ~7-8 GB güvenli alan bırakarak <strong>50 GB</strong> olarak ayarlanmıştır (~15.000 fotoğraf veya yüzlerce 4K video alır).
+                      </p>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-zinc-300 mb-1">
+                        Maksimum Medya Dosyası Limiti (Adet)
+                      </label>
+                      <input
+                        type="number"
+                        min={100}
+                        max={100000}
+                        value={config.maxAlbumItems ?? 10000}
+                        onChange={(e) =>
+                          updateField(
+                            'maxAlbumItems',
+                            Math.max(100, Number(e.target.value) || 10000)
+                          )
+                        }
+                        className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-3 py-2 text-xs text-white"
+                      />
+                      <p className="mt-1 text-[11px] text-zinc-400">
+                        Varsayılan: <strong>10.000 adet</strong> fotoğraf/video (Dosya başı 250 MB 4K video destekli).
+                      </p>
+                    </div>
                   </div>
                 </div>
               )}
@@ -2812,38 +2868,69 @@ export const SetupStudioModal: React.FC<SetupStudioModalProps> = ({
           {/* TAB 7: SHARED ALBUM MODERATION */}
           {activeTab === 'album-admin' && (
             <div className="space-y-6">
-              <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-zinc-800 bg-zinc-900/60 p-4">
-                <div>
-                  <h3 className="text-base font-bold text-white">
-                    Ortak Albüm Medya Yönetimi &amp; Moderasyon ({albumItems.length} Fotoğraf/Video)
-                  </h3>
-                  <p className="text-xs text-zinc-400 mt-0.5">
-                    Misafirlerin yüklediği tüm fotoğraf ve videolar <code className="text-amber-300">uploads/</code> klasörüne kaydedilir. Uygunsuz veya art niyetli yüklemeleri engellemek için buradan tek tıkla <strong>Onayla / Yayına Al</strong> veya <strong>Gizle / Sil</strong> yapabilirsiniz.
-                  </p>
+              <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-4 space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div>
+                    <h3 className="text-base font-bold text-white">
+                      Ortak Albüm Medya Yönetimi &amp; Moderasyon ({albumItems.length} / {config.maxAlbumItems ?? storageStats.maxAlbumItems ?? 10000} Fotoğraf/Video)
+                    </h3>
+                    <p className="text-xs text-zinc-400 mt-0.5">
+                      Misafirlerin yüklediği tüm fotoğraf ve videolar <code className="text-amber-300">uploads/</code> klasörüne kaydedilir. Uygunsuz veya art niyetli yüklemeleri engellemek için buradan tek tıkla <strong>Onayla / Yayına Al</strong> veya <strong>Gizle / Sil</strong> yapabilirsiniz.
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-3">
+                    <select
+                      value={config.albumVisibilityMode || 'moderated'}
+                      onChange={(e) =>
+                        updateField(
+                          'albumVisibilityMode',
+                          e.target.value as 'moderated' | 'admin-only' | 'public-auto'
+                        )
+                      }
+                      className="rounded-xl border border-zinc-700 bg-zinc-950 px-3 py-2 text-xs font-bold text-emerald-300"
+                    >
+                      <option value="moderated">
+                        🛡️ Yönetici Onaylı Gösterim (Onayladıklarım Görünsün)
+                      </option>
+                      <option value="admin-only">
+                        🔒 Sadece Gelin &amp; Damat Görsün (Sayfada Gizli)
+                      </option>
+                      <option value="public-auto">
+                        🌐 Anında Herkese Açık Göster
+                      </option>
+                    </select>
+                  </div>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3">
-                  <select
-                    value={config.albumVisibilityMode || 'moderated'}
-                    onChange={(e) =>
-                      updateField(
-                        'albumVisibilityMode',
-                        e.target.value as 'moderated' | 'admin-only' | 'public-auto'
-                      )
-                    }
-                    className="rounded-xl border border-zinc-700 bg-zinc-950 px-3 py-2 text-xs font-bold text-emerald-300"
-                  >
-                    <option value="moderated">
-                      🛡️ Yönetici Onaylı Gösterim (Onayladıklarım Görünsün)
-                    </option>
-                    <option value="admin-only">
-                      🔒 Sadece Gelin &amp; Damat Görsün (Sayfada Gizli)
-                    </option>
-                    <option value="public-auto">
-                      🌐 Anında Herkese Açık Göster
-                    </option>
-                  </select>
-                </div>
+                {/* Live Raspberry Pi 64GB SD Card Storage Meter */}
+                {(() => {
+                  const maxGB = config.maxTotalStorageGB ?? storageStats.maxStorageGB ?? 50;
+                  const usedMB = storageStats.usedBytes / (1024 * 1024);
+                  const usedGB = usedMB / 1024;
+                  const pct = Math.min(100, (usedGB / maxGB) * 100);
+                  return (
+                    <div className="rounded-xl border border-zinc-800 bg-zinc-950/90 p-3 space-y-1.5">
+                      <div className="flex flex-wrap items-center justify-between text-xs">
+                        <span className="font-bold text-zinc-300">
+                          💾 Raspberry Pi SD Kart / Albüm Depolama Durumu:
+                        </span>
+                        <span className="font-mono font-bold text-amber-400">
+                          {usedGB >= 1
+                            ? `${usedGB.toFixed(2)} GB`
+                            : `${usedMB.toFixed(1)} MB`}{' '}
+                          / {maxGB} GB ({pct.toFixed(1)}%)
+                        </span>
+                      </div>
+                      <div className="h-2 w-full overflow-hidden rounded-full bg-zinc-800">
+                        <div
+                          className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-amber-400 transition-all"
+                          style={{ width: `${Math.max(pct, 0.5)}%` }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
 
               {albumItems.length === 0 ? (

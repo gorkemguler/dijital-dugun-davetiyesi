@@ -379,7 +379,7 @@ export const StoryAndGallerySection: React.FC<StoryAndGallerySectionProps> = ({
                           : 'Galeriden Fotoğraf / Video Seçmek veya Çekmek İçin Dokunun'}
                       </span>
                       <span className={`mt-1 text-xs ${theme.colors.textMuted}`}>
-                        JPG, PNG, WEBP, HEIC ve MP4 / MOV videolar desteklenir (Maks. 100 MB)
+                        JPG, PNG, WEBP, HEIC ve MP4 / MOV 4K videolar desteklenir (Dosya başı maks. 250 MB)
                       </span>
                       <input
                         ref={fileInputRef}

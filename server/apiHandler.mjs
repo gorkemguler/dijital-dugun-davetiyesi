@@ -38,9 +38,9 @@ const ALLOWED_MIME_EXT = {
   'video/webm': '.webm',
 };
 
-const MAX_UPLOAD_BYTES = 100 * 1024 * 1024; // 100 MB per file
-const MAX_ALBUM_ITEMS = 1500; // Protect 64GB SD card
-const MAX_TOTAL_STORAGE_BYTES = 25 * 1024 * 1024 * 1024; // 25 GB max total uploads quota
+const MAX_UPLOAD_BYTES = 250 * 1024 * 1024; // 250 MB per file (supports 4K videos)
+const DEFAULT_MAX_ALBUM_ITEMS = 10000; // Up to 10,000 photos/videos on dedicated 64GB SD card
+const DEFAULT_MAX_STORAGE_GB = 50; // 50 GB dedicated out of 64 GB SD card (~56-58 GiB usable, leaving ~6-8 GB for Raspberry Pi OS)
 const SAFE_ID_REGEX = /^[a-zA-Z0-9_-]{1,80}$/;
 
 /**
@@ -706,17 +706,25 @@ export async function handleApiAndUploads(req, res, next) {
     }
 
     // Check SD Card Quota before accepting upload
+    const maxAlbumItems =
+      Number(config.maxAlbumItems) > 0 ? Number(config.maxAlbumItems) : DEFAULT_MAX_ALBUM_ITEMS;
+    const maxStorageGB =
+      Number(config.maxTotalStorageGB) > 0
+        ? Number(config.maxTotalStorageGB)
+        : DEFAULT_MAX_STORAGE_GB;
+    const maxTotalStorageBytes = maxStorageGB * 1024 * 1024 * 1024;
+
     const existingAlbum = await readJsonSafe(ALBUM_META_PATH, []);
-    if (existingAlbum.length >= MAX_ALBUM_ITEMS) {
+    if (existingAlbum.length >= maxAlbumItems) {
       return sendJson(res, 400, {
-        error: 'Albüm maksimum medya kapasitesine ulaştı.',
+        error: `Albüm maksimum medya kapasitesine (${maxAlbumItems} adet) ulaştı.`,
       });
     }
 
     const currentFolderBytes = await getUploadsFolderSize();
-    if (currentFolderBytes >= MAX_TOTAL_STORAGE_BYTES) {
+    if (currentFolderBytes >= maxTotalStorageBytes) {
       return sendJson(res, 400, {
-        error: 'Sunucu depolama kotası doldu.',
+        error: `Sunucu SD kart depolama kotası (${maxStorageGB} GB) doldu.`,
       });
     }
 
@@ -764,7 +772,7 @@ export async function handleApiAndUploads(req, res, next) {
           if (aborted) return;
           bytesWritten += chunk.length;
           if (bytesWritten > MAX_UPLOAD_BYTES) {
-            cleanupAndReject(new Error('Dosya boyutu 100 MB sınırını aşıyor.'));
+            cleanupAndReject(new Error('Dosya boyutu 250 MB sınırını aşıyor.'));
             return;
           }
 
@@ -840,13 +848,29 @@ export async function handleApiAndUploads(req, res, next) {
     }
   }
 
-  // GET /api/admin/album -> Fetch all album items (including pending moderation)
+  // GET /api/admin/album -> Fetch all album items (including pending moderation) + SD card storage stats
   if (req.method === 'GET' && pathname === '/api/admin/album') {
     if (!isAdmin && authData.isSetupCompleted) {
       return sendJson(res, 401, { error: 'Yetkisiz erişim.' });
     }
+    const config = await readJsonSafe(CONFIG_PATH, {});
     const albumItems = await readJsonSafe(ALBUM_META_PATH, []);
-    return sendJson(res, 200, { albumItems });
+    const usedBytes = await getUploadsFolderSize();
+    const maxStorageGB =
+      Number(config.maxTotalStorageGB) > 0
+        ? Number(config.maxTotalStorageGB)
+        : DEFAULT_MAX_STORAGE_GB;
+    const maxAlbumItems =
+      Number(config.maxAlbumItems) > 0 ? Number(config.maxAlbumItems) : DEFAULT_MAX_ALBUM_ITEMS;
+
+    return sendJson(res, 200, {
+      albumItems,
+      storageStats: {
+        usedBytes,
+        maxStorageGB,
+        maxAlbumItems,
+      },
+    });
   }
 
   // PATCH /api/admin/album/:id -> Approve or hide a photo/video
